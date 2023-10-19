@@ -15,288 +15,239 @@
  */
 
 #include QMK_KEYBOARD_H
-#include "enums.h"
+#include "keycodes.h"
 #include "oled.c"
 #include "os_detection.h"
+#include "coding.h"
 
 const uint32_t PROGMEM unicode_map[] = {
     [UC_GBP]  = 0x00A3 // £
 };
 
-// Tap dance
 tap_dance_action_t tap_dance_actions[] = {
-    [TD_LAMBDAFUNC] = ACTION_TAP_DANCE_DOUBLE(CODE_LAMBDA, CODE_LAMBDAFUNC)
+  [OSLAUNCH] = ACTION_TAP_DANCE_DOUBLE(KC_LGUI, LALT(KC_SPC)),
+  [RUNCODE] = ACTION_TAP_DANCE_DOUBLE(KC_F5, LCTL(KC_F5))
 };
 
 const uint16_t keymaps[][MATRIX_ROWS][MATRIX_COLS] PROGMEM = {
-    /*
-    * QWERTY
-    * ,-----------------------------------------.                    ,-----------------------------------------.
-    * |  `   |   1  |   2  |   3  |   4  |   5  |                    |   6  |   7  |   8  |   9  |   0  |  +   |
-    * |------+------+------+------+------+------|                    |------+------+------+------+------+------|
-    * | LGUI |   Q  |   W  |   E  |   R  |   T  |                    |   Y  |   U  |   I  |   O  |   P  |  -   |
-    * |------+------+------+------+------+------|                    |------+------+------+------+------+------|
-    * | Tab  |   A  |   S  |   D  |   F  |   G  |-------.    ,-------|   H  |   J  |   K  |   L  |   ;  |  '   |
-    * |------+------+------+------+------+------|  Mute      |  Wake |------+------+------+------+------+------|
-    * |LCtrl |   Z  |   X  |   C  |   V  |   B  |-------|    |-------|   N  |   M  |   ,  |   .  |   /  |Enter |
-    * `-----------------------------------------/       /     \      \-----------------------------------------'
-    *            | LAlt | Go   |MO(3) |MO(2) | /LShift /       \Space \  | TT(4)| Bspc |       | ESC |
-    *            |      |      |      |      |/       /         \      \ |      |      |      |      |
-    *            `----------------------------------'           '------''---------------------------'
-    */
-
-    [_QWERTY] = LAYOUT(
-        KC_GRV,   KC_1,   KC_2,    KC_3,    KC_4,    KC_5,                     KC_6,    KC_7,    KC_8,    KC_9,      KC_0,  KC_EQUAL,
-        KC_LGUI,  KC_Q,   KC_W,    KC_E,    KC_R,    KC_T,                     KC_Y,    KC_U,    KC_I,    KC_O,      KC_P,  KC_MINUS,
-        KC_TAB,   KC_A,   KC_S,    KC_D,    KC_F,    KC_G,                     KC_H,    KC_J,    KC_K,    KC_L,   KC_SCLN,  KC_QUOT,
-        KC_LCTL,  KC_Z,   KC_X,    KC_C,    KC_V,    KC_B, KC_MUTE,   KC_WAKE, KC_N,    KC_M,    KC_COMM, KC_DOT, KC_SLSH,  KC_ENT,
-                    KC_LALT, LALT(KC_SPC), MO(3), MO(2), KC_LSFT, KC_SPC, TT(4), KC_BSPC, XXXXXXX, KC_ESC
-    ),
+    
+    // TODO: Consider using these:
+    // https://github.com/qmk/qmk_firmware/blob/master/docs/feature_advanced_keycodes.md#alt--escape-for-alt--tab-idalt-escape-for-alt-tab
+    // https://github.com/qmk/qmk_firmware/blob/master/docs/feature_grave_esc.md
 
     /*
-    * ENGRAM
-    * ,-----------------------------------------.                    ,-----------------------------------------.
-    * |  `   |   1  |   2  |   3  |   4  |   5  |                    |   6  |   7  |   8  |   9  |   0  | ESC  |
-    * |------+------+------+------+------+------|                    |------+------+------+------+------+------|
-    * | LGUI |   B  |   Y  |   O  |   U  |   '  |                    |   "  |   L  |   D  |   W  |   V  |  Z   |
-    * |------+------+------+------+------+------|                    |------+------+------+------+------+------|
-    * | TAB  |   C  |   I  |   E  |   A  |   ,  |-------.    ,-------|   .  |   H  |   T  |   S  |   N  |  Q   |
-    * |------+------+------+------+------+------|  MUTE |    |  Wake |------+------+------+------+------+------|
-    * |LCtrl |   G  |   X  |   J  |   K  |   ;  |-------|    |-------|   ?  |   R  |   M  |   F  |   P  |Enter |
-    * `-----------------------------------------/       /     \      \-----------------------------------------'
-    *            | LAlt |      | Go   |TT(3) | /LShift /       \Space \  |MO(2) | Bspc |       |     |
-    *            |      |      |      |      |/       /         \      \ |      |      |      |      |
-    *            `----------------------------------'           '------''---------------------------'
+    QWERTY
+    Encoders move cursor
+    ,-----------------------------------------.                    ,-----------------------------------------.
+    |  ESC |   1  |   2  |   3  |   4  |   5  |                    |   6  |   7  |   8  |   9  |   0  |   `  |
+    |------+------+------+------+------+------|                    |------+------+------+------+------+------|
+    |<Dsktp|   Q  |   W  |   E  |   R  |   T  |                    |   Y  |   U  |   I  |   O  |   P  |  -   |
+    |------+------+------+------+------+------|                    |------+------+------+------+------+------|
+    |Dsktp>|   A  |   S  |   D  |   F  |   G  |-------.    ,-------|   H  |   J  |   K  |   L  |   ;  |  '   |
+    |------+------+------+------+------+------|       |    |       |------+------+------+------+------+------|
+    |   \  |   Z  |   X  |   C  |   V  |   B  |-------|    |-------|   N  |   M  |   ,  |   .  |   /  |  =   |
+    `-----------------------------------------/       /     \      \-----------------------------------------'
+               |RAISE |LCtrl |LAlt  |CODING| /LShift /       \RShift\  |LOWER | Bkspc| Del  |OS/   |
+               |      |      |      |      |/ |Enter/         \|Space\ |      |      |      |Launch|
+               `----------------------------------'           '------''----------------------------'
     */
 
-    [_ENGRAM] = LAYOUT(
-        KC_GRV,   KC_1,   KC_2,    KC_3,    KC_4,   KC_5,                      KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    KC_ESC,
-        KC_LGUI,  KC_B,   KC_Y,    KC_O,    KC_U,   KC_QUOT,                   KC_DQUO, KC_L,    KC_D,    KC_W,    KC_V,    KC_Z,
-        KC_TAB,   KC_C,   KC_I,    KC_E,    KC_A,   KC_COMM,                   KC_DOT,  KC_H,    KC_T,    KC_S,    KC_N,    KC_Q,
-        KC_LCTL,  KC_G,   KC_X,    KC_J,    KC_K,   KC_SCLN, KC_MUTE, KC_WAKE, KC_QUES, KC_R,    KC_M,    KC_F,    KC_P,    KC_ENT,
-                    KC_LALT, XXXXXXX, LALT(KC_SPC), TT(3), KC_LSFT, KC_SPC, MO(2), KC_BSPC, XXXXXXX, KC_ESC
-    ),
+    [QWERTY] = LAYOUT(
+            KC_ESC,        KC_1, KC_2, KC_3, KC_4, KC_5,                    KC_6, KC_7, KC_8,    KC_9,   KC_0,    KC_GRV,
+            LAG(KC_RIGHT), KC_Q, KC_W, KC_E, KC_R, KC_T,                    KC_Y, KC_U, KC_I,    KC_O,   KC_P,    KC_MINUS,
+            LAG(KC_LEFT),  KC_A, KC_S, KC_D, KC_F, KC_G,                    KC_H, KC_J, KC_K,    KC_L,   KC_SCLN, KC_QUOT,
+            KC_BSLS,       KC_Z, KC_X, KC_C, KC_V, KC_B, XXXXXXX,  XXXXXXX, KC_N, KC_M, KC_COMM, KC_DOT, KC_SLSH, KC_EQUAL,
+         MO(RAISE), KC_LCTL, KC_LALT, MO(CODING),  LSFT_T(KC_ENTER), RSFT_T(KC_SPC), MO(LOWER), KC_BSPC, KC_DEL, TD(OSLAUNCH)
+    ), // 0
+
+    /*
+    COLEMAK
+    Encoders move cursor
+    ,-----------------------------------------.                    ,-----------------------------------------.
+    |  ESC |   1  |   2  |   3  |   4  |   5  |                    |   6  |   7  |   8  |   9  |   0  |   `  |
+    |------+------+------+------+------+------|                    |------+------+------+------+------+------|
+    |<Dsktp|   Q  |   W  |   F  |   P  |   B  |                    |   J  |   L  |   U  |   Y  |   ;  |  -   |
+    |------+------+------+------+------+------|                    |------+------+------+------+------+------|
+    |Dsktp>|   A  |   R  |   S  |   T  |   G  |-------.    ,-------|   M  |   N  |   E  |   I  |   O  |  '   |
+    |------+------+------+------+------+------|       |    |       |------+------+------+------+------+------|
+    |   \  |   Z  |   X  |   C  |   D  |   V  |-------|    |-------|   K  |   H  |   ,  |   .  |   /  |  =   |
+    `-----------------------------------------/       /     \      \-----------------------------------------'
+               |RAISE |LCtrl |LAlt  |CODING| /LShift /       \RShift\  |LOWER | Bkspc| Del  |OS/   |
+               |      |      |      |      |/ |Enter/         \|Space\ |      |      |      |Launch|
+               `----------------------------------'           '------''----------------------------'
+    */
+
+    [COLEMAK] = LAYOUT(
+            KC_ESC,        KC_1, KC_2, KC_3, KC_4, KC_5,                    KC_6, KC_7, KC_8,    KC_9,   KC_0,    KC_GRV,
+            LAG(KC_RIGHT), KC_Q, KC_W, KC_F, KC_P, KC_B,                    KC_M, KC_L, KC_U,    KC_Y,   KC_SCLN, KC_MINUS,
+            LAG(KC_LEFT),  KC_A, KC_R, KC_S, KC_T, KC_G,                    KC_M, KC_N, KC_E,    KC_I,   KC_U,    KC_QUOT,
+            KC_BSLS,       KC_Z, KC_X, KC_C, KC_D, KC_V, XXXXXXX,  XXXXXXX, KC_K, KC_H, KC_COMM, KC_DOT, KC_SLSH, KC_EQUAL,
+         MO(RAISE), KC_LCTL, KC_LALT, MO(CODING),  LSFT_T(KC_ENTER), RSFT_T(KC_SPC), MO(LOWER), KC_BSPC, KC_DEL, TD(OSLAUNCH)
+    ), // 1
+
+    /* LOWER
+    Encoders move cursor
+    ,-----------------------------------------.                    ,-----------------------------------------.
+    |  F1  |  F2  |  F3  |  F4  | F5   | F6   |                    |  F7  |  F8  |  F9  |  F10 | F11  | F12  |
+    |------+------+------+------+------+------|                    |------+------+------+------+------+------|
+    |      |   1  |   2  |   3  |   4  |   5  |                    |   6  |   7  |   8  |   9  |   0  |   `  |
+    |------+------+------+------+------+------|                    |------+------+------+------+------+------|
+    |   £  |   !  |   @  |   #  |   $  |   %  |-------.    ,-------|   ^  |   &  |   *  |   (  |   )  |   |  |
+    |------+------+------+------+------+------|       |    |       |------+------+------+------+------+------|
+    |      |Ctrl-Z|Ctrl-X|Ctrl-C|Ctrl-V|      |-------|    |-------|      |      |      |      |      |      |
+    `-----------------------------------------/       /     \      \-----------------------------------------'
+               |RAISE |LCtrl |LAlt  |CODING| /LShift /       \RShift\  |LOWER | Bkspc| Del  |OS/   |
+               |      |      |      |      |/ |Enter/         \|Space\ |      |      |      |Launch|
+               `----------------------------------'           '------''----------------------------'
+    */
+
+    [LOWER] = LAYOUT(
+            KC_F1,   KC_F2,   KC_F3, KC_F4,   KC_F5,     KC_F6,                     KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,
+            XXXXXXX, KC_1,    KC_1,  KC_3,    KC_4,      KC_5,                      KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    KC_GRV,
+            UC_GBP,  KC_EXLM, KC_AT, KC_HASH, KC_DLR,    KC_PERC,                   KC_GRV,  KC_AMPR, KC_ASTR, KC_LPRN, KC_RPRN, KC_PIPE,
+            XXXXXXX, KC_UNDO, KC_CUT, KC_COPY, KC_PASTE, XXXXXXX, _______, _______, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
+                     _______, _______, _______, _______,          _______, _______,       _______, _______, _______, _______
+    ), // 2
 
     /* CODING
-    * ,-----------------------------------------.                    ,-----------------------------------------.
-    * |  F1  |  F2  |  F3  |  F4  |  F5  |  F6  |                    |  F7  |  F8  |  F9  |  F10 | F11  | F12  |
-    * |------+------+------+------+------+------|                    |------+------+------+------+------+------|
-    * | LGUI |   !  |   @  |   #  |   $  |   %  |                    |      |  ()  |   ==  |  <= |  >=  |      |
-    * |------+------+------+------+------+------|                    |------+------+------+------+------+------|
-    * | Tab  |   |  |      |      |      |   £  |-------.    ,-------|  =>  |  {}  |   !=  |     |      |      |
-    * |------+------+------+------+------+------|  MUTE |    |  Wake |------+------+------+------+------+------|
-    * | Shift|  =   |      |      |   ]  |      |-------|    |-------|      |  []  |  <>  |      |      |Enter |
-    * `-----------------------------------------/       /     \      \-----------------------------------------'
-    *            | LAlt |      | Go   |MO(4) | /LShift /       \Space \  |MO(2) | Bspc |       | ESC |
-    *            |      |      |      |      |/       /         \      \ |      |      |      |      |
-    *            `----------------------------------'           '------''---------------------------'
+    ,-----------------------------------------.                    ,-----------------------------------------.
+    |      |      |      |      |      |      |                    |      | F10  | F-11 |      |      |      |
+    |------+------+------+------+------+------|                    |------+------+------+------+------+------|
+    |      |      |      |      |      |      |                    | F12  |  ==  |  <=  |  >=  |Ctrl-P|      |
+    |------+------+------+------+------+------|                    |------+------+------+------+------+------|
+    |      |      |      |      |      |      |-------.    ,-------|CODERN|  {}  |  !=  |  =>  |Ctrl-T|      |
+    |------+------+------+------+------+------|       |    |       |------+------+------+------+------+------|
+    |      |      |      |      |      |      |-------|    |-------| F1  |  []  |  <>  |   ()  |      |      |
+    `-----------------------------------------/       /     \      \-----------------------------------------'
+               |RAISE |LCtrl |LAlt  |CODING| /LShift /       \RShift\  |LOWER | Bkspc| Del  |OS/   |
+               |      |      |      |      |/ |Enter/         \|Space\ |      |      |      |Launch|
+               `----------------------------------'           '------''----------------------------'
     */
 
-    [_CODING] = LAYOUT(
-        KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,                           KC_F7,   KC_F8,   KC_F9,   KC_F10,   KC_F11,   KC_F12,
-        XXXXXXX, KC_EXLM, KC_AT,   KC_HASH, KC_DLR,  KC_PERC,                         KC_CIRC, CODE_PARENS, CODE_EQUAL, CODE_LESSTHAN,  CODE_GREATERTHAN,  KC_NO,
-        XXXXXXX, KC_PIPE, XXXXXXX, KC_LCBR, KC_RCBR, UM(UC_GBP),                      CODE_LAMBDAFUNC, CODE_BRACES, CODE_NOTEQUAL, XXXXXXX,  XXXXXXX,  XXXXXXX,
-        XXXXXXX, KC_BSLS, XXXXXXX, KC_LBRC, KC_RBRC, XXXXXXX,    XXXXXXX,    XXXXXXX, CODE_INDEX, CODE_GENERIC, XXXXXXX, XXXXXXX,  XXXXXXX,  XXXXXXX,
-                                     XXXXXXX, XXXXXXX, XXXXXXX, MO(4), XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX
-    ),
+    [CODING] = LAYOUT(
+            XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,                   XXXXXXX,     KC_F10,   KC_F11,   XXXXXXX,  XXXXXXX,    XXXXXXX,
+            XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,                   KC_F12,      CL_EQUAL, CL_EQLT,  CL_EQGT,  LCTL(KC_P), XXXXXXX,
+            XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,                   TD(RUNCODE), CL_BRACE, CL_NOTEQ, CL_LMBDA, LCTL(KC_T), XXXXXXX,
+            XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, _______, _______, KC_F1,       CL_INDEX, CL_GNRIC, CL_PAREN, XXXXXXX,    XXXXXXX,
+                     _______, _______, _______,   _______,        _______, _______,       _______, _______, _______, _______
+    ), // 3
 
-    /* SYMBOLS
-    * ,-----------------------------------------.                    ,-----------------------------------------.
-    * |  F1  |  F2  |  F3  |  F4  |  F5  |  F6  |                    |  F7  |  F8  |  F9  |  F10 | F11  | F12  |
-    * |------+------+------+------+------+------|                    |------+------+------+------+------+------|
-    * | LGUI |   !  |   @  |   #  |   $  |   %  |                    |   ^  |   &  |   *  |   (  |   )  |  Z   |
-    * |------+------+------+------+------+------|                    |------+------+------+------+------+------|
-    * | Tab  |   |  |      |   {  |   }  |   £  |-------.    ,-------|   H  |   J  |   K  |   L  |   ;  |  '   |
-    * |------+------+------+------+------+------|  MUTE |    |  Wake |------+------+------+------+------+------|
-    * | Shift|  =   |      |  [   |   ]  |      |-------|    |-------|   N  |   M  |   ,  |   .  |   /  |Enter |
-    * `-----------------------------------------/       /     \      \-----------------------------------------'
-    *            | LAlt |      | Go   |MO(4) | /LShift /       \Space \  |MO(2) | Bspc |       | ESC |
-    *            |      |      |      |      |/       /         \      \ |      |      |      |      |
-    *            `----------------------------------'           '------''---------------------------'
-    */
+    /* RAISE
+    ,-----------------------------------------.                   ,-----------------------------------------.
+    |      |      |      |      |      |      |                   | Home |      |      |      |      |      |
+    |------+------+------+------+------+------|                   |------+------+------+------+------+------|
+    |      |      |      |      |      |      |                   | End  | PWrd |  Up  | NWrd |      |      |
+    |------+------+------+------+------+------|                   |------+------+------+------+------+------|
+    |      |      |      |      |      |      |-------.   ,-------| PgUp | Left | Down | Right|      |      |
+    |------+------+------+------+------+------|       |   |       |------+------+------+------+------+------|
+    |      |      |      |      |      |      |-------|   |-------| PgDn |      |      |      |      |      |
+    `-----------------------------------------/       /    \      \-----------------------------------------'
+               |RAISE |LCtrl |LAlt  |CODING| /LShift /       \RShift\  |LOWER | Bkspc| Del  |OS/   |
+               |      |      |      |      |/ |Enter/         \|Space\ |      |      |      |Launch|
+               `----------------------------------'           '------''---------------------------'
+ */
 
-    [_SYMBOLS] = LAYOUT(
-        KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,                        KC_F7,   KC_F8,   KC_F9,   KC_F10,   KC_F11,   KC_F12,
-        XXXXXXX, KC_EXLM, KC_AT,   KC_HASH, KC_DLR,  KC_PERC,                      KC_CIRC, KC_AMPR, KC_ASTR, KC_LPRN,  KC_RPRN,  KC_NO,
-        XXXXXXX, KC_PIPE, XXXXXXX, KC_LCBR, KC_RCBR, UM(UC_GBP),                   XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,  XXXXXXX,  XXXXXXX,
-        XXXXXXX, KC_BSLS, XXXXXXX, KC_LBRC, KC_RBRC, XXXXXXX, XXXXXXX,    XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,  XXXXXXX,  XXXXXXX,
-                                     XXXXXXX, XXXXXXX, XXXXXXX, MO(4), XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX
-    ),
-
-//     /* NAV
-//     * ,----------------------------------------.                    ,-----------------------------------------.
-//     * |  `   |      |      |      |      |      |                    |      |      |      |      |      |      |
-//     * |------+------+------+------+------+------|                    |------+------+------+------+------+------|
-//     * | LGUI | Ins  | Pscr |      |      |      |                    | PgUp | PWrd |  Up  | NWrd | DLine|      |
-//     * |------+------+------+------+------+------|                    |------+------+------+------+------+------|
-//     * | Tab  | LAlt | LCtl |LShift|      |      |-------.    ,-------| PgDn | Left | Down | Right|      |      |
-//     * |------+------+------+------+------+------|  MUTE  |   |  Wake |------+------+------+------+------+------|
-//     * |LCtrl | Undo |  Cut | Copy | Paste|      |--------|   |-------|      | Home |      | End  |      |      |
-//     * `-----------------------------------------/       /     \      \-----------------------------------------'
-//     *            | LAlt |      | Go   |TT(3) | /LShift /       \Space \  |MO(4)| Del  |       | ESC |
-//     *            |      |      |      |      |/       /         \      \ |      |      |      |      |
-//     *            `----------------------------------'           '------''---------------------------'
-//  */
-
-//     [_NAV] = LAYOUT(
-//         XXXXXXX, XXXXXXX,    XXXXXXX,    XXXXXXX,    XXXXXXX,    XXXXXXX,                   XXXXXXX, XXXXXXX,       XXXXXXX, XXXXXXX,       XXXXXXX,       XXXXXXX,
-//         XXXXXXX, KC_INS,     KC_PSCR,    XXXXXXX,    XXXXXXX,    XXXXXXX,                   KC_PGUP, LCTL(KC_LEFT), KC_UP,   LCTL(KC_RGHT), LCTL(KC_BSPC), XXXXXXX,
-//         XXXXXXX, KC_LALT,    KC_LCTL,    KC_LSFT,    XXXXXXX,    XXXXXXX,                   KC_PGDN, KC_LEFT,       KC_DOWN, KC_RGHT,       XXXXXXX,       XXXXXXX,
-//         XXXXXXX, LCTL(KC_Z), LCTL(KC_X), LCTL(KC_C), LCTL(KC_V), XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,   KC_HOME,     XXXXXXX, KC_END,        XXXXXXX,       XXXXXXX,
-//                                        _______, _______, _______, _______, _______, _______, _______, _______, _______, _______
-//     ),
-
-    /*
-    * MOUS
-    * ,-----------------------------------------.                    ,-----------------------------------------.
-    * |CTRL+W|ALT+A |      |      |      |      |                    |      |      |      |      |      |      |
-    * |------+------+------+------+------+------|                    |------+------+------+------+------+------|
-    * | TRNS |PRNTSC|      | M UP | HOME | PGUP |                    |M Wl U|M Wl D|M Wl L|M Wl R|      |      |
-    * |------+------+------+------+------+------|                    |------+------+------+------+------+------|
-    * | TRNS |SC LCK|M LFT |M DWN |M RGHT|      |-------.    ,-------|  UP  | DOWN | LEFT |RIGHT |      |      |
-    * |------+------+------+------+------+------| TRNS  |    | TRNS  |------+------+------+------+------+------|
-    * | TRNS |PAUSE |      |      | END  | PGDN |-------|    |-------|MOUS1 |MOUS2 |      |      |      |      |
-    * `-----------------------------------------/       /     \      \-----------------------------------------'
-    *            |      | TRNS | TRNS |TRNS  | / TRNS  /       \ TRNS \  |MOUS3 |MOUS4 |MOUS5 |      |
-    *            |      |      |      |      |/       /         \      \ |      |      |      |      |
-    *            `----------------------------------'           '------''---------------------------'
-    */
-    [_MOUSE] = LAYOUT(
-        LCTL(KC_W), LALT(KC_A), XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,                   XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,  XXXXXXX, XXXXXXX,
-        _______,    KC_PSCR,    XXXXXXX, KC_MS_U, KC_HOME, KC_PGUP,                   KC_WH_U, KC_WH_D, KC_WH_L, KC_WH_R,  XXXXXXX, XXXXXXX,
-        _______,    KC_SCRL,    KC_MS_L, KC_MS_D, KC_MS_R, XXXXXXX,                   KC_LEFT, KC_DOWN, KC_UP,   KC_RIGHT, XXXXXXX, XXXXXXX,
-        _______,    KC_PAUS,    XXXXXXX, XXXXXXX, KC_END,  KC_PGDN, _______, _______, KC_BTN1, KC_BTN2, XXXXXXX, XXXXXXX,  XXXXXXX, XXXXXXX,
-                                XXXXXXX, _______, _______, _______, _______, _______, KC_BTN3, KC_BTN4, KC_BTN5, XXXXXXX
-    ),
+    [RAISE] = LAYOUT(
+            XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,                   KC_HOME, XXXXXXX,       XXXXXXX, XXXXXXX,       XXXXXXX, XXXXXXX,
+            XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,                   KC_END,  LCTL(KC_LEFT), KC_UP,   LCTL(KC_RGHT), XXXXXXX, XXXXXXX,
+            XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,                   KC_PGUP, KC_LEFT,       KC_DOWN, KC_RGHT,       XXXXXXX, XXXXXXX,
+            XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, _______, _______, KC_PGDN, XXXXXXX,       XXXXXXX, XXXXXXX,       XXXXXXX, XXXXXXX,
+                     _______, _______, _______,   _______,        _______, _______,       _______, _______, _______, _______
+    ), // 4
 
     /* SYSTEM
-    * ,----------------------------------------.                    ,-----------------------------------------.
-    * |      |QWERTY|ENGRAM|      |      |      |                    |      |      |      |      |      | Sleep|
-    * |------+------+------+------+------+------|                    |------+------+------+------+------+------|
-    * |      |      |      |      |      |      |                    |      |      |      |      |      |      |
-    * |------+------+------+------+------+------|                    |------+------+------+------+------+------|
-    * |      |      |      |      |      |      | -------.   ,-------|      | Vol- | Mute | Vol+ |  Del |      |
-    * |------+------+------+------+------+------|        |   |       |------+------+------+------+------+------|
-    * |      |      |      |      |      |      |--------|   |-------|      | Prev | Play | Next |      | Wake |
-    * |------+------+------+------+------+------/       /     \      \-----------------------------------------'
-    *            | LAlt |      | Go   |TT(3) | /LShift /       \Space \  |MO(2) | Bspc |       | ESC |
-    *            |      |      |      |      |/       /         \      \ |      |      |      |      |
-    *            `----------------------------------'           '------''---------------------------'
+    Accessed by tapping RAISE AND LOWER together
+    ,----------------------------------------.                    ,-----------------------------------------.
+    |      |      |      |      |      |      |                    | UC>  |QWERTY|ENGRAM|      |      | Sleep|
+    |------+------+------+------+------+------|                    |------+------+------+------+------+------|
+    |      |      |      |      |      |      |                    |      |      |      |      |      | Wake |
+    |------+------+------+------+------+------|                    |------+------+------+------+------+------|
+    |      |      |      |      |      |      | -------.   ,-------|      |      |      | Lock |      |      |
+    |------+------+------+------+------+------|        |   |       |------+------+------+------+------+------|
+    |      |      |      |      |      |      |--------|   |-------|      |      |      |      |      |      |
+    |------+------+------+------+------+------/       /     \      \-----------------------------------------'
+               |      |      |      |      | /       /       \      \  |      |      |       |     |
+               |      |      |      |      |/       /         \      \ |      |      |      |      |
+               `----------------------------------'           '------''---------------------------'
     */
 
-    [_SYSTEM] = LAYOUT(
-    XXXXXXX, DF(_QWERTY), DF(_ENGRAM), XXXXXXX, XXXXXXX, XXXXXXX,                           XXXXXXX, XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX, KC_SLEP,
-    XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,                       XXXXXXX, XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX, XXXXXXX,
-    XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,                       XXXXXXX, KC_VOLD,   KC_MUTE,   KC_VOLU,   XXXXXXX, XXXXXXX,
-    XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,     XXXXXXX, XXXXXXX, KC_MPRV,   KC_MPLY,   KC_MNXT,   XXXXXXX, KC_WAKE,
-                    _______, _______, _______, _______, _______, _______, _______, _______, _______, _______
-    )
+    [SYSTEM] = LAYOUT(
+            XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,                   UC_NEXT, DF(QWERTY), DF(COLEMAK), XXXXXXX,    XXXXXXX, KC_SLEP,
+            XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,                   XXXXXXX, XXXXXXX,    XXXXXXX,     XXXXXXX,    XXXXXXX, KC_WAKE,
+            XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,                   XXXXXXX, XXXXXXX,    XXXXXXX,     LGUI(KC_L), XXXXXXX, XXXXXXX,
+            XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,    XXXXXXX,     XXXXXXX,    XXXXXXX, XXXXXXX,
+                     _______, _______, _______,   _______,        _______, _______,       _______, _______, _______, _______
+    ) // 6
 };
-
-
 
 // Configure encoders
 #ifdef ENCODER_ENABLE
 
+enum encoders {
+    LEFT = 0,
+    RIGHT
+};
+
+typedef struct encoder_config_s {
+    uint8_t anticlockwise;
+    uint8_t clockwise;
+} encoder_config;
+
+const encoder_config encoder_configs[] = {
+    [0] = { KC_UP, KC_DOWN },
+    [1] = { KC_LEFT, KC_RIGHT }
+};
+
 bool encoder_update_user(uint8_t index, bool clockwise) {
-    if (index == 0) {
-        if (clockwise) {
-            tap_code(KC_VOLD);
-        } else {
-            tap_code(KC_VOLU);
-        }
-    } else if (index == 1) {
-        if (clockwise) {
-            tap_code(KC_PGDN);
-        } else {
-            tap_code(KC_PGUP);
-        }
-    }
-    return true;
+    encoder_config active_encoder = encoder_configs[index];
+    
+    //switch (get_highest_layer(layer_state)) {
+
+    uint16_t keycode = clockwise
+        ? active_encoder.clockwise 
+        : active_encoder.anticlockwise;
+
+    tap_code(keycode);
+    
+    return false;
 }
 
 #endif
 
-static void create_space(void) {
-    SEND_STRING(SS_TAP(X_LEFT) SS_TAP(X_ENTER) SS_TAP(X_ENTER) SS_TAP(X_UP));
+// Send some extra characters after the key is released
+static void keyup_event(uint16_t keycode) {
+    switch (keycode) {
+        case CL_EQUAL:
+        case CL_NOTEQ:
+        case CL_LMBDA:
+        case CL_EQLT:
+        case CL_EQGT:
+            SEND_STRING(SS_TAP(X_SPACE));
+            break;
+  
+        case CL_BRACE:
+            SEND_STRING(SS_TAP(X_LEFT) SS_TAP(X_ENTER) SS_TAP(X_ENTER) SS_TAP(X_UP));
+            break;
+
+        case CL_PAREN:
+        case CL_INDEX:
+        case CL_GNRIC:
+            SEND_STRING(SS_TAP(X_LEFT));
+            break;
+    }    
 }
 
 // Process custom keycodes
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
-    switch (keycode) {
-        case CODE_EQUAL:
-            if (record->event.pressed) {
-                SEND_STRING("== ");
-            } 
+    if (keycode >= CL_EQUAL && keycode <= CL_GNRIC) {
+        if (record->event.pressed) {
+            uint16_t symbol_index = get_code_index(keycode);
+            send_string(code_symbols[symbol_index]);
+        } else {
+            keyup_event(keycode);
+        }
 
-            return false;
-
-       case CODE_NOTEQUAL:
-            if (record->event.pressed) {
-                SEND_STRING("!= ");
-            }
-
-            return false; 
-
-       case CODE_LAMBDA:
-            if (record->event.pressed) {
-                SEND_STRING("=> ");
-            } 
-
-            return false; 
-
-        case CODE_LAMBDAFUNC:
-            if (record->event.pressed) {
-                SEND_STRING("() => {}");
-            } else {
-                create_space();
-            }
-
-            return false; 
-
-       case CODE_LESSTHAN:
-            if (record->event.pressed) {
-                SEND_STRING("<= ");
-            } 
-
-            return false; 
-
-       case CODE_GREATERTHAN:
-            if (record->event.pressed) {
-                SEND_STRING(">=");
-            } 
-
-            return false; 
-
-       case CODE_PARENS:
-            if (record->event.pressed) {
-                SEND_STRING("()");
-            } 
-
-            return false; 
-
-       case CODE_BRACES:
-            if (record->event.pressed) {
-                SEND_STRING("{}");
-            } else {
-                create_space();
-            }
-
-            return false; 
-
-       case CODE_INDEX:
-            if (record->event.pressed) {
-                SEND_STRING("[]");
-            } 
-
-            return false; 
-            
-       case CODE_GENERIC:
-            if (record->event.pressed) {
-                SEND_STRING("<>");
-            } 
-
-            return false; 
+        return false;
     }
 
     return true;

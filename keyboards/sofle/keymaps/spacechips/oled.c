@@ -15,6 +15,8 @@
  */
 
 #include "logos.h"
+#include "print.h"
+//#include "animation.c"
 
 #ifdef OLED_ENABLE
 
@@ -23,10 +25,12 @@ oled_rotation_t oled_init_user(oled_rotation_t rotation) {
 }
 
 static void display_os_logo(void) {
+    oled_set_cursor(0, 0);
+
     if (unicode_config.input_mode == UNICODE_MODE_LINUX) {
         oled_write_raw_P(linux_logo, 160);
     } else if (unicode_config.input_mode == UNICODE_MODE_WINCOMPOSE) {
-        oled_write_raw_P(windows_logo, 128);
+       oled_write_raw_P(windows_logo, 128);
     } 
     else {
        oled_write_ln_P(PSTR("?????"), false);
@@ -34,59 +38,60 @@ static void display_os_logo(void) {
 }
 
 static void primary_oled(void) {
+    display_os_logo();
+    oled_set_cursor(0, 7);
+
+    // Show current keyboard layout
+    int base_layer = get_highest_layer(default_layer_state);
     int current_layer = get_highest_layer(layer_state);
 
-    oled_set_cursor(0, 0);
-    oled_write_P(PSTR("STATE"), true);
-
-    // Show current keyboard mode
-    oled_set_cursor(0, 2);
-    oled_write_P(PSTR("TYPE:"), false);
-
-    oled_set_cursor(0, 3);
-    switch (current_layer) {
-        case _QWERTY:
-            oled_write_P(PSTR("QWRTY"), false);
+    oled_write_P(PSTR("MODE"), false);
+    oled_set_cursor(0, 8);
+    switch (base_layer) {
+        case QWERTY:
+            oled_write_P(PSTR("qwrty"), false);
             break;
-        case _ENGRAM:
-            oled_write_P(PSTR("ENGRM"), false);
+        case COLEMAK:
+            oled_write_P(PSTR("colmk"), false);
             break;
         default:
             break;
     }
     
-    oled_set_cursor(0, 5);
-    oled_write_P(PSTR("MODE:"), false);
+    oled_set_cursor(0, 10);
+    oled_write_P(PSTR("LAYER"), false);
 
-    oled_set_cursor(0, 6);
+    oled_set_cursor(0, 11);
     switch (current_layer) {
-        case _CODING:
-            oled_write_P(PSTR("Code"), false);
+        case QWERTY:
+        case COLEMAK:
+            oled_write_P(PSTR("Base "), false);
             break;
-        case _SYMBOLS:
-            oled_write_P(PSTR("@$*&#"), false);
+        case RAISE:
+            oled_write_P(PSTR("Raise"), false);
             break;
-        case _NAV:
-            oled_write_P(PSTR("Nav  "), false);
+        case CODING:
+            oled_write_P(PSTR("Code "), false);
             break;
-        case _MOUSE:
-            oled_write_P(PSTR("Mouse"), false);
+        case LOWER:
+            oled_write_P(PSTR("Lower"), false);
             break;
-        case _SYSTEM:
-            oled_write_P(PSTR("Sys  "), false);
+        case SYSTEM:
+            oled_write_P(PSTR("Systm"), false);
             break;
         default:
-            oled_write_P(PSTR("Base "), false);
+            oled_write_P(PSTR("???  "), false);
     }
 
-    oled_set_cursor(0, 8);
+    oled_set_cursor(0, 13);
+    oled_write_P(PSTR("WPM"), false);
+
+    oled_set_cursor(0, 14);
     oled_write(get_u8_str(get_current_wpm(), '0'), false);
 }
 
 static void secondary_oled(void) {
-    display_os_logo();
-    
-    oled_set_cursor(0, 8);
+    oled_set_cursor(0, 0);
     oled_write(get_u8_str(get_current_wpm(), '0'), false);
 }
 
