@@ -34,6 +34,7 @@ static void render_background(const char *background) {
 
         for (int i = 0; i <= DISPLAY_WIDTH - 1; i++ ) {
             uint16_t frame_start = offset + i;
+            uint16_t frame_end = 
 
             display_frame[i] = pgm_read_byte(background + offset + i);
             

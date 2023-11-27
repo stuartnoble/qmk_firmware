@@ -1,10 +1,10 @@
 SWAP_HANDS_ENABLE = no
 OLED_ENABLE = yes
-#UNICODEMAP_ENABLE = yes
 OS_DETECTION_ENABLE = yes
 WPM_ENABLE = yes
 SPLIT_KEYBOARD = yes 
-#TAP_DANCE_ENABLE = yes # Add 720 bytes
-ENCODER_ENABLE = yes # Adds 32 bytes
-#CONSOLE_ENABLE = yes
-EXTRAFLAGS += -flto
+ENCODER_ENABLE = yes 
+LTO_ENABLE = yes
+ENCODER_MAP_ENABLE = yes  
+EXTRAKEY_ENABLE = yes       
+MOUSEKEY_ENABLE = yes                                    
