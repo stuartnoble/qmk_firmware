@@ -13,7 +13,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
- #define ENCODER_DIRECTION_FLIP
+#pragma once
 
- #undef ENCODER_RESOLUTION
- #define ENCODER_RESOLUTION 4
+#define AUTO_SHIFT_TIMEOUT 150
+#define NO_AUTO_SHIFT_SPECIAL
+
+#define ENCODER_DIRECTION_FLIP
+
+#undef ENCODER_RESOLUTION
+#define ENCODER_RESOLUTION 4
+
+#define BOTH_SHIFTS_TURNS_ON_CAPS_WORD
