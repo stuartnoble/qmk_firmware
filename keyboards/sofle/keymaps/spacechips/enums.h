@@ -5,3 +5,10 @@ enum sofle_layers {
     _NAV,
     _FUN
 };
+
+enum custom_keycodes {
+    CK_QWRT = SAFE_RANGE,
+    CK_CLMK,
+    CK_PND,
+    CK_BSEL
+};
