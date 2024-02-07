@@ -25,3 +25,6 @@
 #define TAPPING_FORCE_HOLD
 #undef TAPPING_TERM
 #define TAPPING_TERM 200
+
+// #undef OLED_FONT_HEIGHT
+// #define OLED_FONT_HEIGHT 8 // So we can align glyphs better = 16 lines
