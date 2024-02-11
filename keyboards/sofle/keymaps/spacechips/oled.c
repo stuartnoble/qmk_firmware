@@ -141,35 +141,52 @@ void render_glyph_row(const char (*glyph)[16] , int row_number) {
     oled_write_raw_P(glyph[row_number], sizeof(glyph[row_number]));
 }
 
-void render_top_modifier_glyphs(bool is_shift_on, bool is_ctrl_on) {
-    char glyph_buffer[64]; // Add a const for number of glyphs to calculate this
+void render_top_modifier_glyphs(bool is_shift_on, bool is_ctrl_on, bool is_command_on, bool is_alt_on) {
+    char glyph_buffer[128]; // Add a const for number of glyphs to calculate this
     
     for (int i = 0; i < MODIFIER_GLYPH_ROWS; i++) {
         for (int j = 0; j < MODIFIER_GLYPH_SIZE; j++) {
-            int byte_index = (i * (MODIFIER_GLYPH_SIZE * 2)) + j; // MODIFIER_GLYPH_SIZE * 2 cos we have two glyphs drawn
+            int byte_index = (i * (MODIFIER_GLYPH_SIZE * 2)) + j; // MODIFIER_GLYPH_SIZE * 2 cos we have two glyphs per row
 
+            // top row
             glyph_buffer[byte_index] = pgm_read_byte(shift_glyph[is_shift_on][i] + j);
             glyph_buffer[MODIFIER_GLYPH_SIZE + byte_index] = pgm_read_byte(ctrl_glyph[is_ctrl_on][i] + j);
+
+            // bottom row
+            glyph_buffer[64 + byte_index] = pgm_read_byte(command_glyph[is_command_on][i] + j);
+            glyph_buffer[64 + MODIFIER_GLYPH_SIZE + byte_index] = pgm_read_byte(alt_glyph[is_alt_on][i] + j);
         }
-        
-        //render_glyph_row(shift_glyph[is_shift_on], i);
-        //render_glyph_row(ctrl_glyph[is_ctrl_on], i);
     }
 
     oled_write_raw(glyph_buffer, sizeof(glyph_buffer));
-
-    //oled_write_raw_P(shift_glyph[isShiftOn][0], sizeof(shift_glyph[isShiftOn][0]));
-    //oled_write_raw_P(ctrl_glyph[isCtrlOn][0], sizeof(ctrl_glyph[isCtrlOn][0]));
 }
 
 void render_base_layout(void) { 
     bool isShifted = get_mods() & MOD_MASK_SHIFT;
     bool isCtrl = get_mods() & MOD_MASK_CTRL;
+    bool isCommand = get_mods() & MOD_MASK_GUI;
+    bool isAlt = get_mods() & MOD_MASK_ALT;
 
-    oled_set_cursor(0, 0);
-    oled_write_raw_P(colemak, sizeof(colemak));
+    int base_layer = get_highest_layer(default_layer_state);
+    //int current_layer = get_highest_layer(layer_state);
+
     oled_set_cursor(0, 6);
-    render_top_modifier_glyphs(isShifted, isCtrl);
+    oled_write_raw_P(layer_glyph, sizeof(layer_glyph));
+    
+    oled_set_cursor(0, 10);
+    switch (base_layer) {
+        case _BASE:
+            oled_write_raw_P(qwerty_glyph, sizeof(qwerty_glyph));
+            break;
+        case _CLMK:
+            oled_write_raw_P(colemak_glyph, sizeof(colemak_glyph));
+            break;
+        default:
+            break;
+    }
+
+    oled_set_cursor(0, 12);
+    render_top_modifier_glyphs(isShifted, isCtrl, isCommand, isAlt);
 }
 
 void render_status_main(void) {

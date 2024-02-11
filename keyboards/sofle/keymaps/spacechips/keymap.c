@@ -94,6 +94,15 @@ layer_state_t layer_state_set_user(layer_state_t state) {
 }
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+    bool isShifted = get_mods() & MOD_MASK_SHIFT;
+    bool isCtrl = get_mods() & MOD_MASK_CTRL;
+    bool isCommand = get_mods() & MOD_MASK_GUI;
+    bool isAlt = get_mods() & MOD_MASK_ALT;
+
+    if (isShifted || isCtrl || isCommand || isAlt) {
+        render_top_modifier_glyphs(isShifted, isCtrl, isCommand, isAlt);
+    }
+    
     switch (keycode) {
         case CK_QWRT:
             if (record->event.pressed) {
