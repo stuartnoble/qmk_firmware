@@ -15,10 +15,9 @@
  */
 
 #include "logos.h"
-//#include "animation.c"
 #include "sofle-logo.c"
 #include "decompress.c"
-#include "oled-glyphs.c"
+#include "glyphs/glyphs.h"
 
 bool is_shift_on = 0;
 
@@ -137,11 +136,13 @@ oled_rotation_t oled_init_user(oled_rotation_t rotation) {
 //     }
 // }
 
-void render_glyph_row(const char (*glyph)[16] , int row_number) {
-    oled_write_raw_P(glyph[row_number], sizeof(glyph[row_number]));
+void render_layer_glyph(int current_layer) {
+    //char glyph_buffer [128];
+
+    return;
 }
 
-void render_top_modifier_glyphs(bool is_shift_on, bool is_ctrl_on, bool is_command_on, bool is_alt_on) {
+void render_modifier_glyphs(bool is_shift_on, bool is_ctrl_on, bool is_command_on, bool is_alt_on) {
     char glyph_buffer[128]; // Add a const for number of glyphs to calculate this
     
     for (int i = 0; i < MODIFIER_GLYPH_ROWS; i++) {
@@ -161,6 +162,10 @@ void render_top_modifier_glyphs(bool is_shift_on, bool is_ctrl_on, bool is_comma
     oled_write_raw(glyph_buffer, sizeof(glyph_buffer));
 }
 
+void render_capsword_glyph(bool is_capsword_on) {
+    oled_write_raw_P(capsword_glyph[is_capsword_on], sizeof(capsword_glyph[is_capsword_on]));
+}
+
 void render_base_layout(void) { 
     bool isShifted = get_mods() & MOD_MASK_SHIFT;
     bool isCtrl = get_mods() & MOD_MASK_CTRL;
@@ -168,28 +173,37 @@ void render_base_layout(void) {
     bool isAlt = get_mods() & MOD_MASK_ALT;
 
     int base_layer = get_highest_layer(default_layer_state);
-    //int current_layer = get_highest_layer(layer_state);
-
-    oled_set_cursor(0, 6);
-    oled_write_raw_P(layer_glyph, sizeof(layer_glyph));
     
-    oled_set_cursor(0, 10);
+    oled_set_cursor(0, 0);
+    oled_write_P(PSTR("13Feb"), false);
+
+    oled_set_cursor(0, 1);
+    oled_write_P(PSTR("16:07"), false);
+
+    oled_set_cursor(0, 3);
     switch (base_layer) {
-        case _BASE:
+        case QWERTY:
             oled_write_raw_P(qwerty_glyph, sizeof(qwerty_glyph));
             break;
-        case _CLMK:
+        case COLEMAK:
             oled_write_raw_P(colemak_glyph, sizeof(colemak_glyph));
             break;
         default:
             break;
     }
 
-    oled_set_cursor(0, 12);
-    render_top_modifier_glyphs(isShifted, isCtrl, isCommand, isAlt);
+    oled_set_cursor(0, 5);
+    int current_layer = get_highest_layer(layer_state);   
+    render_layer_glyph(current_layer);
+
+    oled_set_cursor(0, 10);
+    render_modifier_glyphs(isShifted, isCtrl, isCommand, isAlt);
+
+    oled_set_cursor(0, 14);
+    render_capsword_glyph(is_capsword_on);
 }
 
-void render_status_main(void) {
+void render_status_primary(void) {
     render_base_layout();
 }
 
@@ -206,13 +220,13 @@ bool oled_task_user(void) {
 //     else { oled_on(); }
 // #endif
 
-    //if (is_master) {
-        render_status_main();  // Renders the current keyboard state (layer, lock, caps, scroll, etc)
-   // } else {
-  //      render_status_secondary();
-  //  }
+    if (is_keyboard_master()) {
+        render_status_primary();  // Renders the current keyboard state (layer, lock, caps, scroll, etc)
+    } else {
+        render_status_secondary();
+    }
 
-  return false;
+    return false;
 }
 
 #endif
