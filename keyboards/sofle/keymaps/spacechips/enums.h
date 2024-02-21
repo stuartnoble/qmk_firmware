@@ -1,11 +1,12 @@
 // Key mapping layers, defined in or they are indicated on the display
 // (except QWERTY which interchanges with COLEMAK)
 enum sofle_layers {
-    FUNCTIONS,
-    SYMBOLS,
-    COLEMAK,
-    NAVIGATION,
     QWERTY,
+    COLEMAK,
+    SYMBOLS,
+    FUNCTIONS,
+    NAVIGATION,
+    SPARE
 };
 
 enum custom_keycodes {

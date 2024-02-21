@@ -82,10 +82,19 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     return true;
 }
 
+layer_state_t layer_state_set_user(layer_state_t state) {
+  active_layers[SYMBOLS] = IS_LAYER_ON_STATE(state, SYMBOLS);
+  active_layers[FUNCTIONS] = IS_LAYER_ON_STATE(state, FUNCTIONS);
+  active_layers[NAVIGATION] = IS_LAYER_ON_STATE(state, NAVIGATION);
+  active_layers[SPARE] = IS_LAYER_ON_STATE(state, SPARE);
+  
+  return state;
+}
+
 const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][2] = {
-    [FUNCTIONS]  =  { ENCODER_CCW_CW(XXXXXXX,       TO(SYMBOLS)),    ENCODER_CCW_CW(_______,  _______) },
-    [SYMBOLS]  =    { ENCODER_CCW_CW(TO(FUNCTIONS), TO(COLEMAK)),    ENCODER_CCW_CW(_______,  _______) },
-    [COLEMAK] =     { ENCODER_CCW_CW(TO(SYMBOLS),   TO(NAVIGATION)), ENCODER_CCW_CW(_______,  _______) },
-    [NAVIGATION]  = { ENCODER_CCW_CW(TO(COLEMAK),   XXXXXXX),        ENCODER_CCW_CW(KC_MS_WH_UP, KC_MS_WH_DOWN) },
-    [QWERTY] =      { ENCODER_CCW_CW(TO(SYMBOLS),   TO(NAVIGATION)), ENCODER_CCW_CW(FZ_LEFT,  FZ_RIGT), }
+    [COLEMAK] =     { ENCODER_CCW_CW(TO(SYMBOLS),    XXXXXXX),        ENCODER_CCW_CW(_______,  _______) },
+    [SYMBOLS]  =    { ENCODER_CCW_CW(TO(FUNCTIONS),  TO(COLEMAK)),    ENCODER_CCW_CW(_______,  _______) },
+    [FUNCTIONS]  =  { ENCODER_CCW_CW(TO(NAVIGATION), TO(SYMBOLS)),    ENCODER_CCW_CW(_______,  _______) },
+    [NAVIGATION]  = { ENCODER_CCW_CW(XXXXXXX,        TO(FUNCTIONS)),  ENCODER_CCW_CW(KC_MS_WH_UP, KC_MS_WH_DOWN) },
+    [QWERTY] =      { ENCODER_CCW_CW(TO(SYMBOLS),    TO(NAVIGATION)), ENCODER_CCW_CW(FZ_LEFT,  FZ_RIGT), }
 };

@@ -13,7 +13,7 @@
 #define NAVIGATION_LH_LOWER     _______, KC_0,    KC_1,    KC_2,    KC_3,    XXXXXXX, _______
                             /* ╰────────┴────────├────────┼────────┼────────┼────────┼────────┤ */ // Ends with thumb key
                             /*                   │        │        │        │        │        │ */
-#define NAVIGATION_LH_BOTTOM                         _______, _______, _______, _______, KC_LSFT
+#define NAVIGATION_LH_BOTTOM                      _______, _______, _______, _______, KC_LSFT
                             /*                   ╰────────┴────────┴────────┴────────┴────────╯ */
 
 /* RIGHT SIDE */
