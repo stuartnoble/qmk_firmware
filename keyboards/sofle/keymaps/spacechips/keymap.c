@@ -36,18 +36,7 @@ void caps_word_set_user(bool active) {
     render_capsword_glyph(active);
 }
 
-// void mods_set_user(bool mods) {
-//     bool shift_on = mods & MOD_MASK_SHIFT;
-//     bool ctrl_on = mods & MOD_MASK_CTRL;
-//     bool cmd_on = mods & MOD_MASK_GUI;
-//     bool alt_on = mods & MOD_MASK_ALT;
-
-//     render_top_modifier_glyphs(shift_on, ctrl_on, cmd_on, alt_on);
-// }
-
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
-    //mods_set_user(get_mods());
-    
     switch (keycode) {
         case CK_QWRT:
             if (record->event.pressed) {

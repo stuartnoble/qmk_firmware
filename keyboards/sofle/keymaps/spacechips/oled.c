@@ -18,8 +18,6 @@
 #include "decompress.c"
 #include "glyphs/glyphs.h"
 
-bool is_shift_on = 0;
-
 #ifdef OLED_ENABLE
 
 oled_rotation_t oled_init_user(oled_rotation_t rotation) {
@@ -33,7 +31,7 @@ void patch_layers_glyph(int glyph_byte_index, int layer, char* output) {
 
     layer_glyph_patch_t glyph_patch = layers[layer];
     int patch_start_index = glyph_patch.patch_start_index;
-    int patch_end_index = patch_start_index + glyph_patch.patch_size;
+    int patch_end_index = patch_start_index + glyph_patch.patch_size - 1;
 
     if (glyph_byte_index >= patch_start_index && glyph_byte_index <= patch_end_index) {
         output[glyph_byte_index] |= pgm_read_byte(glyph_patch.patch_bytes + (glyph_byte_index - patch_start_index));
