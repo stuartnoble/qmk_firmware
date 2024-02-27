@@ -1,8 +1,10 @@
-const int MODIFIER_GLYPH_ROWS = 2;
-const int MODIFIER_GLYPH_SIZE = 16;
+#include QMK_KEYBOARD_H
 
-static bool is_capsword_on;
+// Modifier glyphs are constructed in a 2x2 icon grid
+// Each byte draws 2x4 vertical pixels, and each glyph is broken up into rows to make
+// it easier to track and organise rendering each icon
 
+// Provides off and on state glyphs for ALT modifier key
 static const char PROGMEM alt_glyph[2][2][16] = {
     // 'alt_off', 16x16px
     {
@@ -16,6 +18,7 @@ static const char PROGMEM alt_glyph[2][2][16] = {
     }
 };
 
+// Provides off and on state glyphs for COMMAND modifier key
 static const char PROGMEM command_glyph[2][2][16] = {
     // 'command_off', 16x16px
     {
@@ -29,6 +32,7 @@ static const char PROGMEM command_glyph[2][2][16] = {
     }
 };
 
+// Provides off and on state glyphs for CTRL modifier key
 static const char PROGMEM ctrl_glyph[2][2][16] = {
     // 'ctrl_off', 16x16px
     {
@@ -42,6 +46,7 @@ static const char PROGMEM ctrl_glyph[2][2][16] = {
     }
 };
 
+// Provides off and on state glyphs for SHIFT key
 static const char PROGMEM shift_glyph[2][2][16] = {
     // 'shift_off', 16x16px
     {
@@ -56,15 +61,16 @@ static const char PROGMEM shift_glyph[2][2][16] = {
     }
 };
 
+// Provides off and on state glyphs for the caps word indicator
 static const char PROGMEM capsword_glyph[2][64] = {
-    // 'caps-off', 32x16px
+    // 'capsword-off', 32x16px
     {
         0xf0, 0x08, 0xe4, 0x14, 0x24, 0x04, 0xe4, 0x14, 0xe4, 0x04, 0xf4, 0x94, 0x64, 0x04, 0x64, 0x94, 
         0x24, 0x04, 0x04, 0xe4, 0x14, 0xe4, 0x04, 0xe4, 0x94, 0x14, 0x04, 0xe4, 0x94, 0x14, 0x08, 0xf0, 
         0x0f, 0x10, 0x27, 0x28, 0x24, 0x20, 0x2f, 0x21, 0x2f, 0x20, 0x2f, 0x20, 0x20, 0x20, 0x24, 0x28, 
         0x27, 0x20, 0x20, 0x27, 0x28, 0x27, 0x20, 0x2f, 0x20, 0x20, 0x20, 0x2f, 0x20, 0x20, 0x10, 0x0f
     },
-    // 'caps-on', 32x16px
+    // 'capsword-on', 32x16px
     {
         0xf0, 0xf8, 0x1c, 0xec, 0xdc, 0xfc, 0x1c, 0xec, 0x1c, 0xfc, 0x0c, 0x6c, 0x9c, 0xfc, 0x9c, 0x6c, 
         0xdc, 0xfc, 0xfc, 0xfc, 0x1c, 0xec, 0x1c, 0xfc, 0x0c, 0xec, 0x1c, 0xfc, 0xfc, 0xfc, 0xf8, 0xf0, 
@@ -72,3 +78,7 @@ static const char PROGMEM capsword_glyph[2][64] = {
         0x38, 0x3f, 0x3f, 0x3f, 0x38, 0x37, 0x38, 0x3f, 0x30, 0x3f, 0x30, 0x3f, 0x3f, 0x3f, 0x1f, 0x0f
     }
 };
+
+// Static variable to capture when caps word is enabled
+// Controlled by caps_word_set_user() in keymap.c
+bool is_capsword_on;

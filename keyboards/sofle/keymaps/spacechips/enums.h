@@ -1,3 +1,6 @@
+#ifndef ENUMS_H
+#define ENUMS_H
+
 // Key mapping layers, defined in order they are indicated on the display
 // (except QWERTY which interchanges with COLEMAK)
 enum sofle_layers {
@@ -16,3 +19,5 @@ enum custom_keycodes {
     CK_PND,
     CK_BSEL
 };
+
+#endif

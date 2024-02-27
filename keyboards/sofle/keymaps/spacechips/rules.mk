@@ -19,4 +19,6 @@ ENCODER_ENABLE = yes
 LTO_ENABLE = yes
 ENCODER_MAP_ENABLE = yes  
 EXTRAKEY_ENABLE = yes       
-CAPS_WORD_ENABLE = yes       
+CAPS_WORD_ENABLE = yes
+
+SRC += oled/glyphs/keymaps.c oled/glyphs/layers.c oled/glyphs/modifiers.c

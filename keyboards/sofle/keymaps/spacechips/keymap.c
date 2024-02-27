@@ -1,4 +1,4 @@
-/* Copyright 2023 spacechips <spacechips@tuta.io>
+/* Copyright 2023 Stuart Noble <sofle@stuartnoble.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,10 +18,11 @@
 
 #include "enums.h"
 #include "keymaps/keymaps.h"
-#include "oled.c"
 
+// Helper macro to enable layer defines
 #define MACRO_LAYOUT(...)      LAYOUT(__VA_ARGS__)
 
+// Defines keymap layers
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [FUNCTIONS] = MACRO_LAYOUT(FUNCTIONS_LAYOUT),
     [SYMBOLS] = MACRO_LAYOUT(SYMBOLS_LAYOUT),
@@ -30,12 +31,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [QWERTY] = MACRO_LAYOUT(QWERTY_LAYOUT)
 };
 
-void caps_word_set_user(bool active) {
-    is_capsword_on = active;
-
-    render_capsword_glyph(active);
-}
-
+// Process user key presses
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
         case CK_QWRT:
@@ -71,15 +67,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     return true;
 }
 
-layer_state_t layer_state_set_user(layer_state_t state) {
-  active_layers[SYMBOLS] = IS_LAYER_ON_STATE(state, SYMBOLS);
-  active_layers[FUNCTIONS] = IS_LAYER_ON_STATE(state, FUNCTIONS);
-  active_layers[NAVIGATION] = IS_LAYER_ON_STATE(state, NAVIGATION);
-  active_layers[SPARE] = IS_LAYER_ON_STATE(state, SPARE);
-  
-  return state;
-}
-
+// Maps rotary encoder settings
 const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][2] = {
     [COLEMAK] =     { ENCODER_CCW_CW(TO(SYMBOLS),    XXXXXXX),        ENCODER_CCW_CW(_______,  _______) },
     [SYMBOLS]  =    { ENCODER_CCW_CW(TO(FUNCTIONS),  TO(COLEMAK)),    ENCODER_CCW_CW(_______,  _______) },
