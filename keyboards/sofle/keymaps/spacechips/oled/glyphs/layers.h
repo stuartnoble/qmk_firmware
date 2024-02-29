@@ -53,18 +53,11 @@ static const char PROGMEM spare_glyph_patch[] = {
 };
 
 // Assigns the byte patch to each keymap layer
-const layer_glyph_patch_t layers[] = {
+static const layer_glyph_patch_t layers[] = {
     [SYMBOLS] = { 68, 24, symbols_glyph_patch },
     [FUNCTIONS] =  { 36, 54, functions_glyph_patch },
     [NAVIGATION] = { 35, 33, navigation_glyph_patch },
     [SPARE] = { 3, 65, spare_glyph_patch }
 };
 
-// Tracks which layer is active
-// Set by layer_state_set_user() in keymap.c
-static bool active_layers[] = {
-    [SYMBOLS] = false,
-    [FUNCTIONS] =  false,
-    [NAVIGATION] = false,
-    [SPARE] = false
-};
+void render_layers_glyph(void);

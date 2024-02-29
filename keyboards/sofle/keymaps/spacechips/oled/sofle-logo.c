@@ -1,3 +1,5 @@
+#include QMK_KEYBOARD_H
+
 // Generated using squeez-o: https://github.com/nullbitsco/squeez-o
 
 // Compressed oled data structure

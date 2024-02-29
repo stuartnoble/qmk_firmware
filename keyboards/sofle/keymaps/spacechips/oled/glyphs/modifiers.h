@@ -82,3 +82,6 @@ static const char PROGMEM capsword_glyph[2][64] = {
 // Static variable to capture when caps word is enabled
 // Controlled by caps_word_set_user() in keymap.c
 bool is_capsword_on;
+
+void render_modifier_glyphs(void);
+void render_capsword_glyph(void);

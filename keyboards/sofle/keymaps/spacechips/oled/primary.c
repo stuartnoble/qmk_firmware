@@ -1,3 +1,9 @@
+#include QMK_KEYBOARD_H
+
+#include "glyphs/layers.h"
+#include "glyphs/keymaps.h"
+#include "glyphs/modifiers.h"
+
 // Main function to render the content to the primary OLED
 // Returns false by default for use in oled_task_user
 bool render_primary_oled(void) {

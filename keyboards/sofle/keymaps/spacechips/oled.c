@@ -16,14 +16,19 @@
 
 #ifdef OLED_ENABLE
 
+#include QMK_KEYBOARD_H
+
+#include "oled/primary.h"
+#include "oled/secondary.h"
+
 oled_rotation_t oled_init_user(oled_rotation_t rotation) {
     return OLED_ROTATION_270;
 }
 
 bool oled_task_user(void) {
     return is_keyboard_master()
-        ? render_primary_status()
-        : render_secondary_status();
+        ? render_primary_oled()
+        : render_secondary_oled();
 }
 
 #endif

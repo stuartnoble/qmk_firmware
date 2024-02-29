@@ -1,5 +1,14 @@
 #include "layers.h"
 
+// Tracks which layer is active
+// Set by layer_state_set_user() in keymap.c
+static bool active_layers[] = {
+    [SYMBOLS] = false,
+    [FUNCTIONS] =  false,
+    [NAVIGATION] = false,
+    [SPARE] = false
+};
+
 // Patches the layer glyph when the given layer is active
 void patch_layers_glyph(int glyph_byte_index, int layer, char* output) {
     if (!active_layers[layer]) {
