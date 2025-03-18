@@ -4,10 +4,10 @@
 #define SYMBOLS_LH_TOP          _______, _______, _______, _______, _______, _______
                             /* ├────────┼────────┼────────┼────────┼────────┼────────┤          */
                             /* │        │   !    │   @    │   #    │   $    │   %    │          */
-#define SYMBOLS_LH_UPPER        _______, KC_EXLM, KC_AT ,  KC_HASH, KC_DLR,  KC_PERC       
+#define SYMBOLS_LH_UPPER        _______, KC_EXLM, KC_AT ,  KC_HASH, KC_DLR,  KC_PERC
                             /* ├────────┼────────┼────────┼────────┼────────┼────────┤          */
                             /* │        │   <    │   >    │   [    │   ]    │   \    │          */
-#define SYMBOLS_LH_HOME         _______, KC_LABK, KC_RABK, KC_LBRC, KC_RBRC, KC_BSLS       
+#define SYMBOLS_LH_HOME         _______, KC_LABK, KC_RABK, KC_LBRC, KC_RBRC, KC_BSLS
                             /* ├────────┼────────┼────────┼────────┼────────┼────────┼────────┤ */ // Ends with encoder click
                             /* │        │   |    │   `    │   ~    │   £    │        │        │ */
 #define SYMBOLS_LH_LOWER        _______, KC_PIPE, KC_GRV,  KC_TILD, CK_PND,  XXXXXXX, _______
@@ -19,8 +19,8 @@
 /* RIGHT SIDE */
 
                             /*          ╭────────┬────────┬────────┬────────┬────────┬────────╮ */
-                            /*          │        │        │        │        │        │        │ */ 
-#define SYMBOLS_RH_TOP                   _______, _______, _______, _______, _______, _______  
+                            /*          │        │        │        │        │        │        │ */
+#define SYMBOLS_RH_TOP                   _______, _______, _______, _______, _______, _______
                             /*          ├────────┼────────┼────────┼────────┼────────┼────────┤ */
                             /*          │   ^    │   &    │   *    │   +    │   =    │        │ */
 #define SYMBOLS_RH_UPPER                 KC_CIRC, KC_AMPR, KC_ASTR, KC_PLUS, KC_EQL,  _______
@@ -28,9 +28,9 @@
                             /*          │   /    │   {    │   }    │   (    │   )    │        │ */
 #define SYMBOLS_RH_HOME                  KC_SLSH, KC_LCBR, KC_RCBR, KC_LPRN, KC_RPRN, _______
                             /* ├────────┼────────┼────────┼────────┼────────┼────────┼────────┤ */ // Starts with encoder click
-                            /* │        │        │   '    │   ""   │   -    │   ?    │        │ */
+                            /* │        │        │   '    │   "    │   -    │   ?    │        │ */
 #define SYMBOLS_RH_LOWER        _______, XXXXXXX, KC_QUOT, KC_DQUO, KC_MINS, KC_QUES, _______
-                            /* ├────────┼────────┼────────┼────────┼────────┤────────┴────────╯ */         
+                            /* ├────────┼────────┼────────┼────────┼────────┤────────┴────────╯ */
                             /* │        │        │        │        │        │                   */
 #define SYMBOLS_RH_BOTTOM       _______, _______, _______, _______, _______
                             /* ╰────────┴────────┴────────┴────────┴────────╯                   */
