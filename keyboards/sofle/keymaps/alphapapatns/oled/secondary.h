@@ -1,0 +1,1 @@
+bool render_secondary_oled(void);
