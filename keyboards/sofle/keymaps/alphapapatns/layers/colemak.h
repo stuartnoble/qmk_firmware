@@ -1,42 +1,43 @@
 
 /* LEFT SIDE */
-#define CM_MODZ LGUI_T(KC_Z)
-#define CM_MODX LALT_T(KC_X)
-#define CM_MODC LCTL_T(KC_C)
-#define CM_MODD LSFT_T(KC_D)
+#define CM_MODA LGUI_T(KC_A)
+#define CM_MODR LALT_T(KC_R)
+#define CM_MODS LCTL_T(KC_S)
+#define CM_MODT LSFT_T(KC_T)
 
                             /* ╭────────┬────────┬────────┬────────┬────────┬────────╮          */
                             /* │        │   1    │   2    │   3    │   4    │   5    │          */
                             /* ├────────┼────────┼────────┼────────┼────────┼────────┤          */
-                            /* │        │   Q    │   W    │   F    │   P    │   B    │          */
-#define COLEMAK_LH_UPPER        XXXXXXX, KC_Q,    KC_W,    KC_F,    KC_P,    KC_B
+                            /* │        │   Q    │   W    │   F    │   P    │   G    │          */
+#define COLEMAK_LH_UPPER        XXXXXXX, KC_Q,    KC_W,    KC_F,    KC_P,    KC_G
                             /* ├────────┼────────┼────────┼────────┼────────┼────────┤          */
-                            /* │        │   A    │   R    │   S    │   T    │   G    │          */
-#define COLEMAK_LH_HOME         XXXXXXX, KC_A,    KC_R,    KC_S,    KC_T,    KC_G
+                            /* │        │ A(Cmd) │ R(Alt) │S(Ctrl) │T(Shft) │   D    │          */
+#define COLEMAK_LH_HOME         XXXXXXX, CM_MODA, CM_MODR, CM_MODS, CM_MODT, KC_D
                             /* ├────────┼────────┼────────┼────────┼────────┼────────┼────────┤ */ // Ends with encoder click
-                            /* │        │ Z(Cmd) │ X(Alt) │ C(Ctlr)│ D(Shft)│   V    │ QWERTY │ */
-#define COLEMAK_LH_LOWER        XXXXXXX, CM_MODZ, CM_MODX, CM_MODC, CM_MODD, KC_V,    CK_QWRT
+                            /* │ Shift  │   Z    │    X   │   C    │   V    │   B    │ QWERTY │ */
+#define COLEMAK_LH_LOWER        KC_LSFT, KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,    CK_QWRT
                             /* ╰────────┴────────├────────┼────────┼────────┼────────┼────────┤ */ // Ends with thumb key
-                            /*                   │        │        │ Del    │ BkSpc  │ Tab    │ */
+                            /*                   │        │        │        │ BkSpc  │ Tab    │ */
                             /*                   ╰────────┴────────┴────────┴────────┴────────╯ */
 
 /* RIGHT SIDE */
-#define CM_MODH RSFT_T(KC_H)
-#define CM_MOD1 LCTL_T(KC_COMM)
-#define CM_MOD2 LALT_T(KC_DOT)
-#define CM_MOD3 RGUI_T(KC_SLSH)
+#define CM_MODN RSFT_T(KC_N)
+#define CM_MODE RCTL_T(KC_E)
+#define CM_MODI RALT_T(KC_I)
+#define CM_MODO RGUI_T(KC_O)
+#define CM_QUOT TD(TD_QUOT)
 
                             /*          ╭────────┬────────┬────────┬────────┬────────┬────────╮ */
                             /*          │   6    │   7    │   8    │   9    │   0    │        │ */
                             /*          ├────────┼────────┼────────┼────────┼────────┼────────┤ */
-                            /*          │   J    │   L    │   U    │   Y    │  : ;   │        │ */
-#define COLEMAK_RH_UPPER                 KC_J,    KC_L,    KC_U,    KC_Y,    KC_SCLN, XXXXXXX
+                            /*          │   J    │   L    │   U    │   Y    │   '    │ Del    │ */
+#define COLEMAK_RH_UPPER                 KC_J,    KC_L,    KC_U,    KC_Y,    CM_QUOT, KC_DEL
                             /*          ├────────┼────────┼────────┼────────┼────────┼────────┤ */
-                            /*          │   M    │   N    │   E    │   I    │   O    │        │ */
-#define COLEMAK_RH_HOME                  KC_M,    KC_N,    KC_E,    KC_I,    KC_O,    XXXXXXX
+                            /*          │   H    │N(Shft) │E(Ctrl) │ I(Alt) │ O(Cmd) │ Bkspc  │ */
+#define COLEMAK_RH_HOME                  KC_H,    CM_MODN, CM_MODE, CM_MODI, CM_MODO, KC_BSPC
                             /* ├────────┼────────┼────────┼────────┼────────┼────────┼────────┤ */ // Starts with encoder click
-                            /* │        │   K    │ H(Shft)│ ,(Ctrl)│ .(Alt) │ /(Cmd))│        │ */
-#define COLEMAK_RH_LOWER        XXXXXXX, KC_K,    CM_MODH, CM_MOD1, CM_MOD2, CM_MOD3, XXXXXXX
+                            /* │        │   K    │   M    │   ,    │   .    │   /    │        │ */
+#define COLEMAK_RH_LOWER        XXXXXXX, KC_K,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH, XXXXXXX
                             /* ├────────┼────────┼────────┼────────┼────────┤────────┴────────╯ */
                             /* │ Enter  │ Space  │ Esc    │        │        │                   */
                             /* ╰────────┴────────┴────────┴────────┴────────╯                   */
@@ -50,4 +51,4 @@
                             COLEMAK_HOME,  \
                             COLEMAK_LOWER, \
                             BASE_BOTTOM
-// New line otherwise multiline macro produce compile error
+// New line otherwise multiline macros produce compile error

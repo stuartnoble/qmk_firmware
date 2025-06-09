@@ -47,4 +47,4 @@
                             FUNCTIONS_HOME,  \
                             FUNCTIONS_LOWER, \
                             FUNCTIONS_BOTTOM
-// New line otherwise multiline macro produce compile error
+// New line otherwise multiline macros produce compile error

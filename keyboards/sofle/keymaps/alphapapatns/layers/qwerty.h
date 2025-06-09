@@ -49,4 +49,4 @@
                             QWERTY_HOME,  \
                             QWERTY_LOWER, \
                             BASE_BOTTOM
-// New line otherwise multiline macro produce compile error
+// New line otherwise multiline macros produce compile error

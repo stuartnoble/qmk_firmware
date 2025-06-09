@@ -32,8 +32,8 @@
                             /* │        │   0    │   1    │   2    │   3    │   .    │        │ */
 #define NUMBERS_RH_LOWER        XXXXXXX, KC_0,    KC_1,    KC_2,    KC_3,    KC_PDOT, XXXXXXX
                             /* ├────────┼────────┼────────┼────────┼────────┤────────┴────────╯ */
-                            /* │ Enter  │BkSpace │        │        │        │                   */
-#define NUMBERS_RH_BOTTOM       KC_PENT, LT_NUM,  XXXXXXX, XXXXXXX, XXXXXXX
+                            /* │        │        │        │        │        │                   */
+#define NUMBERS_RH_BOTTOM       XXXXXXX, XXXXXXX,  XXXXXXX, XXXXXXX, XXXXXXX
                             /* ╰────────┴────────┴────────┴────────┴────────╯                   */
 
 #define NUMBERS_TOP      NUMBERS_LH_TOP,    NUMBERS_RH_TOP
@@ -47,4 +47,4 @@
                          NUMBERS_HOME,  \
                          NUMBERS_LOWER, \
                          NUMBERS_BOTTOM
-// New line otherwise multiline macro produce compile error
+// New line otherwise multiline macros produce compile error

@@ -45,4 +45,4 @@
                         SPARE_HOME,  \
                         SPARE_LOWER, \
                         SPARE_BOTTOM
-// New line otherwise multiline macro produce compile error
+// New line otherwise multiline macros produce compile error

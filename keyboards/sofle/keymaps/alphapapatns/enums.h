@@ -17,8 +17,21 @@ enum custom_keycodes {
     CK_QWRT = SAFE_RANGE,
     CK_CLMK,
     CK_BASE,
-    CK_PND,
     CK_BSEL
+};
+
+// Keycodes for combos
+enum combo_events {
+    COMBO_EOL
+};
+
+// Keycodes for tapdance actions
+enum tapdance_keycodes {
+    TD_DLR,
+    TD_PRN,
+    TD_CBR,
+    TD_BRC,
+    TD_QUOT
 };
 
 #endif
