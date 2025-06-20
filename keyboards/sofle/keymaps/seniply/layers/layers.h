@@ -1,0 +1,7 @@
+#include "base.h"
+#include "qwerty.h"
+#include "colemak.h"
+#include "functions.h"
+#include "numbers.h"
+#include "symbols.h"
+#include "extend.h"

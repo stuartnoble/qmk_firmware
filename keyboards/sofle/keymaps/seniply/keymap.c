@@ -26,26 +26,40 @@
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [QWERTY]    = MACRO_LAYOUT(QWERTY_LAYOUT),
     [COLEMAK]   = MACRO_LAYOUT(COLEMAK_LAYOUT),
-    [FUNCTIONS] = MACRO_LAYOUT(FUNCTIONS_LAYOUT),
-    [NUMBERS]   = MACRO_LAYOUT(NUMBERS_LAYOUT),
+    [EXTEND]    = MACRO_LAYOUT(EXTEND_LAYOUT),
     [SYMBOLS]   = MACRO_LAYOUT(SYMBOLS_LAYOUT),
-    [SPARE]     = MACRO_LAYOUT(SPARE_LAYOUT)
+    [FUNCTIONS] = MACRO_LAYOUT(FUNCTIONS_LAYOUT),
+    [NUMBERS]   = MACRO_LAYOUT(NUMBERS_LAYOUT)
 };
 
 // Sets combos
-const uint16_t PROGMEM eol_combo[] = {KC_LSFT, KC_SPACE, COMBO_END};
+// const uint16_t PROGMEM eol_combo[] = {KC_TAB, KC_ENTER, COMBO_END};
 
-combo_t key_combos[] = {
-    [COMBO_EOL] = COMBO_ACTION(eol_combo)
-};
+// combo_t key_combos[] = {
+//     [COMBO_EOL] = COMBO_ACTION(eol_combo)
+// };
+
+void dance_eol(tap_dance_state_t *state, void *user_data) {
+    if (state->count >= 2) {
+        tap_code16(UK_SCLN);
+        tap_code16(KC_ENT);
+        reset_tap_dance(state);
+    }
+
+    if (state->count == 1) {
+        tap_code16(KC_ENT);
+        reset_tap_dance(state);
+    }
+}
 
 // Sets tap dance actions
 tap_dance_action_t tap_dance_actions[] = {
     [TD_DLR] = ACTION_TAP_DANCE_DOUBLE(UK_DLR, UK_PND),
-    [TD_PRN] = ACTION_TAP_DANCE_DOUBLE(UK_LPRN, UK_RPRN),
-    [TD_CBR] = ACTION_TAP_DANCE_DOUBLE(UK_LCBR, UK_RCBR),
-    [TD_BRC] = ACTION_TAP_DANCE_DOUBLE(UK_LBRC, UK_RBRC),
-    [TD_QUOT] = ACTION_TAP_DANCE_DOUBLE(UK_QUOT, UK_DQUO)
+    // [TD_PRN] = ACTION_TAP_DANCE_DOUBLE(UK_LPRN, UK_RPRN),
+    // [TD_CBR] = ACTION_TAP_DANCE_DOUBLE(UK_LCBR, UK_RCBR),
+    // [TD_BRC] = ACTION_TAP_DANCE_DOUBLE(UK_LBRC, UK_RBRC),
+    [TD_QUOT] = ACTION_TAP_DANCE_DOUBLE(UK_QUOT, UK_DQUO),
+    [TD_EOL] = ACTION_TAP_DANCE_FN(dance_eol)
 };
 
 // Process user key presses
@@ -73,24 +87,24 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     return true;
 }
 
-void process_combo_event(uint16_t combo_index, bool pressed) {
-    switch(combo_index) {
-      case COMBO_EOL:
-        if (pressed) {
-          tap_code16(UK_SCLN);
-          tap_code16(KC_ENT);
-        }
-        break;
-    }
-  }
+// void process_combo_event(uint16_t combo_index, bool pressed) {
+//     switch(combo_index) {
+//       case COMBO_EOL:
+//         if (pressed) {
+//           tap_code16(UK_SCLN);
+//           tap_code16(KC_ENT);
+//         }
+//         break;
+//     }
+//   }
 
 // Maps rotary encoder settings
 const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][2] = {
     // { left_encoder(scroll_left, scroll_right), right_encoder(scroll_left, scroll_right) }
-    [QWERTY]    = { ENCODER_CCW_CW(TO(SYMBOLS), XXXXXXX),       ENCODER_CCW_CW(XXXXXXX, XXXXXXX)           },
-    [COLEMAK]   = { ENCODER_CCW_CW(TO(SYMBOLS), XXXXXXX),       ENCODER_CCW_CW(XXXXXXX, XXXXXXX)           },
-    [SYMBOLS]   = { ENCODER_CCW_CW(TO(NUMBERS), CK_BASE),       ENCODER_CCW_CW(_______,  _______)          },
-    [NUMBERS]   = { ENCODER_CCW_CW(TO(FUNCTIONS), TO(SYMBOLS)), ENCODER_CCW_CW(KC_MS_WH_UP, KC_MS_WH_DOWN) },
-    [FUNCTIONS] = { ENCODER_CCW_CW(XXXXXXX, TO(NUMBERS)),       ENCODER_CCW_CW(_______,  _______)          },
-    [SPARE]     = { ENCODER_CCW_CW(XXXXXXX, XXXXXXX),           ENCODER_CCW_CW(_______,  _______)          }
+    [QWERTY]    = { ENCODER_CCW_CW(TO(EXTEND), XXXXXXX),        ENCODER_CCW_CW(XXXXXXX, XXXXXXX)           },
+    [COLEMAK]   = { ENCODER_CCW_CW(TO(EXTEND), XXXXXXX),        ENCODER_CCW_CW(XXXXXXX, XXXXXXX)           },
+    [EXTEND]    = { ENCODER_CCW_CW(TO(FUNCTIONS), CK_BASE),     ENCODER_CCW_CW(_______,  _______)          },
+    [FUNCTIONS] = { ENCODER_CCW_CW(TO(SYMBOLS), TO(EXTEND)),    ENCODER_CCW_CW(_______,  _______)          },
+    [SYMBOLS]   = { ENCODER_CCW_CW(TO(NUMBERS), TO(FUNCTIONS)), ENCODER_CCW_CW(KC_MS_WH_UP, KC_MS_WH_DOWN) },
+    [NUMBERS]   = { ENCODER_CCW_CW(XXXXXXX, TO(SYMBOLS)),       ENCODER_CCW_CW(_______,  _______)          }
 };
